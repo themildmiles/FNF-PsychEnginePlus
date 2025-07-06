@@ -1806,6 +1806,7 @@ class PlayState extends MusicBeatState
 					{
 						var fakeCrochet:Float = (60 / SONG.bpm) * 1000;
 						var i:Int = 0;
+						var notesToHit:Array<Note> = [];
 						while(i < notes.length)
 						{
 							var daNote:Note = notes.members[i];
@@ -1820,7 +1821,7 @@ class PlayState extends MusicBeatState
 							if(daNote.mustPress)
 							{
 								if(cpuControlled && !daNote.blockHit && daNote.canBeHit && (daNote.isSustainNote || daNote.strumTime <= Conductor.songPosition))
-									goodNoteHit(daNote);
+									notesToHit.push(daNote);
 							}
 							else if (daNote.wasGoodHit && !daNote.hitByOpponent && !daNote.ignoreNote)
 								opponentNoteHit(daNote);
@@ -1838,6 +1839,8 @@ class PlayState extends MusicBeatState
 							}
 							if(daNote.exists) i++;
 						}
+						for (note in notesToHit)
+							goodNoteHit(note);
 					}
 					else
 					{
