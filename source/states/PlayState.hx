@@ -2621,8 +2621,10 @@ class PlayState extends MusicBeatState
 		comboSpr.antialiasing = antialias;
 		comboSpr.y += 60;
 		comboSpr.velocity.x += FlxG.random.int(1, 10) * playbackRate;
-		comboGroup.add(rating);
 
+		if (daRating != ratingsData[0] || !ClientPrefs.data.hideSicks)
+			comboGroup.add(rating);
+	
 		if (!PlayState.isPixelStage)
 		{
 			rating.setGraphicSize(Std.int(rating.width * 0.7));

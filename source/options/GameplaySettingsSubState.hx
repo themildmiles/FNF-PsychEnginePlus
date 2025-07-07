@@ -73,6 +73,13 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		option.maxValue = 30;
 		addOption(option);
 
+		var option:Option = new Option('Hide Sick! Judgement',
+			'Prevents Sick!s from appearing.\nUseful if you want to see non-Sick! judgement for accuracy.',
+			'hideSicks',
+			BOOL);
+		addOption(option);
+
+
 		var option:Option = new Option('Sick! Hit Window',
 			'Changes the amount of time you have\nfor hitting a "Sick!" in milliseconds.',
 			'sickWindow',
