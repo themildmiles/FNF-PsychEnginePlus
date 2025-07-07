@@ -476,9 +476,11 @@ class PlayState extends MusicBeatState
 
 		uiGroup = new FlxSpriteGroup();
 		comboGroup = new FlxSpriteGroup();
+		hitErrorMeter = new HitErrorMeter();
 		noteGroup = new FlxTypedGroup<FlxBasic>();
 		add(comboGroup);
 		add(noteGroup);
+		add(hitErrorMeter);
 		add(uiGroup); // idk why this pisses me off so much let me see my score >:(
 
 		Conductor.songPosition = -Conductor.crochet * 5 + Conductor.offset;
@@ -569,6 +571,7 @@ class PlayState extends MusicBeatState
 
 		uiGroup.cameras = [camHUD];
 		noteGroup.cameras = [camHUD];
+		hitErrorMeter.cameras = [camHUD];
 		comboGroup.cameras = [camRating];
 
 		startingSong = true;
@@ -1692,7 +1695,7 @@ class PlayState extends MusicBeatState
 		callOnScripts('onUpdate', [elapsed]);
 
 		super.update(elapsed);
-
+		
 		setOnScripts('curDecStep', curDecStep);
 		setOnScripts('curDecBeat', curDecBeat);
 
@@ -1761,7 +1764,7 @@ class PlayState extends MusicBeatState
 		{
 			FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom, FlxG.camera.zoom, Math.exp(-elapsed * 3.125 * camZoomingDecay * playbackRate));
 			camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, Math.exp(-elapsed * 3.125 * camZoomingDecay * playbackRate));
-			camRatng.zoom = camHUD.zoom;
+			camRating.zoom = camHUD.zoom;
 		}
 
 		FlxG.watch.addQuick("secShit", curSection);
@@ -2541,6 +2544,8 @@ class PlayState extends MusicBeatState
 	public var uiGroup:FlxSpriteGroup;
 	// Stores Note Objects in a Group
 	public var noteGroup:FlxTypedGroup<FlxBasic>;
+	// A hit error meter
+	public var hitErrorMeter:HitErrorMeter;
 
 	private function cachePopUpScore()
 	{
@@ -2556,7 +2561,7 @@ class PlayState extends MusicBeatState
 
 	private function popUpScore(note:Note = null):Void
 	{
-		var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.data.ratingOffset);
+		var noteDiff:Float = note.strumTime - Conductor.songPosition + ClientPrefs.data.ratingOffset;
 		vocals.volume = 1;
 
 		if (!ClientPrefs.data.comboStacking && comboGroup.members.length > 0)
@@ -2575,7 +2580,8 @@ class PlayState extends MusicBeatState
 		var score:Int = 350;
 
 		//tryna do MS based judgment due to popular demand
-		var daRating:Rating = Conductor.judgeNote(ratingsData, noteDiff / playbackRate);
+		var daRating:Rating = Conductor.judgeNote(ratingsData, Math.abs(noteDiff) / playbackRate);
+		hitErrorMeter.registerError(noteDiff / playbackRate, daRating.name);
 
 		totalNotesHit += daRating.ratingMod;
 		note.ratingMod = daRating.ratingMod;
