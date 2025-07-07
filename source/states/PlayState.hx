@@ -1767,6 +1767,8 @@ class PlayState extends MusicBeatState
 			camRating.zoom = camHUD.zoom;
 		}
 
+		camRating.filters = camHUD.filters; // yes
+
 		FlxG.watch.addQuick("secShit", curSection);
 		FlxG.watch.addQuick("beatShit", curBeat);
 		FlxG.watch.addQuick("stepShit", curStep);
